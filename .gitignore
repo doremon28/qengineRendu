@@ -1,0 +1,14 @@
+﻿.idea/checkstyle-idea.xml
+.idea/codestream.xml
+.idea/compiler.xml
+.idea/discord.xml
+.idea/intellij-javadocs-4.0.1.xml
+.idea/jarRepositories.xml
+.idea/jpa-buddy.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/sonarlint
+.idea/libraries
+target
+.settings
