@@ -1,6 +1,7 @@
 package qengineRendu.program;
 
 import qengineRendu.program.parser.Parser;
+import qengineRendu.program.parser.QueryParser;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 import qengineRendu.program.utils.Dictionary;
@@ -24,15 +25,20 @@ public class MainTest {
             parser.parse();
             IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
             System.out.println("*************Dictionary*************");
-            dictionaryIndexesService.getDictionary().forEach((k, v) -> System.out.println(k + " " + v));
+//            dictionaryIndexesService.getDictionary().forEach((k, v) -> System.out.println(k + " " + v));
 
 
-            System.out.println("*************SPO indexes*************");
+//            System.out.println("*************SPO indexes*************");
             dictionaryIndexesService.getIndexesByType(TypeIndex.SPO).forEach((k, v) -> System.out.println(k + " " + v));
 
             System.out.println("*************Search by subject and predicate*************");
-            String returnedValue = dictionaryIndexesService.searchFromDictionaryByIndexesObjects("http://db.uwaterloo.ca/~galuc/wsdbm/User0", "http://schema.org/birthDate");
+            String returnedValue = dictionaryIndexesService.searchFromDictionaryByIndexesObjects(
+            "http://db.uwaterloo.ca/~galuc/wsdbm/User0",
+            "http://schema.org/birthDate");
             System.out.println(returnedValue);
+
+//            QueryParser queryParser = new QueryParser();
+//            queryParser.parse(fileManagement.getBasUrl(), fileManagement.getQueryFile());
         }
 
 }

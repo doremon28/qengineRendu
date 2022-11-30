@@ -10,7 +10,7 @@ public class FilePath {
 		this.basUrl = null;
 		this.workingDir = workingDir;
 		this.queryFile = workingDir + "sample_query.queryset";
-		this.dataFile = workingDir + "sample_data.nt";
+		this.dataFile = workingDir + "100K.nt";
 	}
 
 	public String getBasUrl() {
