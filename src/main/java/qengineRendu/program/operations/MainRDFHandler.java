@@ -3,10 +3,12 @@ package qengineRendu.program.operations;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.rio.RDFHandlerException;
 import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
+import qengineRendu.program.service.IDictionaryIndexesService;
+import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 import qengineRendu.program.utils.Dictionary;
 
 public class MainRDFHandler extends AbstractRDFHandler{
-	Dictionary dictionary = new Dictionary();
+	IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
 	@Override
 	public void startRDF() throws RDFHandlerException {
 		// TODO Auto-generated method stub
@@ -39,7 +41,7 @@ public class MainRDFHandler extends AbstractRDFHandler{
 	}
 
 	private void dictionaryBiMap(Statement st) {
-		dictionary.addEntryFromStatement(st);
+		dictionaryIndexesService.addEntryFromStatement(st);
 	}
 
 }
