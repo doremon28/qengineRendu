@@ -24,7 +24,13 @@ public class Dictionary {
 
 
     public String decode(Long index) {
-        return dictionaryMap.get(index);
+        if(dictionaryMap.get(index) != null) {
+            return dictionaryMap.get(index);
+        } else {
+            logger.error("Index not found in dictionary");
+            return null;
+        }
+//        return dictionaryMap.get(index);
     }
 
     public Long encode(String value) {

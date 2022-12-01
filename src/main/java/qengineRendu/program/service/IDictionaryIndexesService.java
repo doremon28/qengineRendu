@@ -9,12 +9,13 @@ import java.util.Map;
 public interface IDictionaryIndexesService {
     String searchFromDictionaryByIndexesObjects(String subject, String predicate);
     String searchFromDictionaryByIndexesObjects(List<String> statement);
-    void generateSPOIndexes(Long[] indexes);
+    void generateSPOIndexes(TypeIndex typeIndex, Long[] indexes);
     void generatePOSIndexes(Long[] indexes);
     void generateSOPIndexes(Long[] indexes);
 
-    void addEntryFromStatement(Statement st);
+    void addEntryFromStatement(TypeIndex typeIndex, Statement st);
     Map<Long, String> getDictionary();
     Map<Long, Map<Long, List<Long>>> getIndexesByType(TypeIndex typeIndex);
+
 
 }

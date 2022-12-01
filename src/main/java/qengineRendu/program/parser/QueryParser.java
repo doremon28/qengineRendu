@@ -32,14 +32,6 @@ public class QueryParser {
             patternResult.add(pattern.getPredicateVar().getValue() != null ? pattern.getPredicateVar().getValue().stringValue() : null);
             patternResult.add(String.valueOf(pattern.getObjectVar().getValue() != null ? pattern.getObjectVar().getValue().stringValue() : null));
             queryResult.add(patternResult);
-
-            System.out.println("subject1 : " + patternResult.get(0));
-            System.out.println("predicate : " + patternResult.get(1));
-            System.out.println("object : " + patternResult.get(2));
-
-//            System.out.println("Subject: "+pattern.getSubjectVar());
-//            System.out.println("Predicat: "+pattern.getPredicateVar());
-//            System.out.println("Object :"+pattern.getObjectVar());
         }
 
         // Utilisation d'une classe anonyme
@@ -84,6 +76,7 @@ public class QueryParser {
                     for(List<String> pattern : queryResult){
                         System.out.println(dictionaryService.searchFromDictionaryByIndexesObjects(pattern));
                     }
+                    i++;
                     queryString.setLength(0); // Reset le buffer de la requête en chaine vide
                 }
             }
