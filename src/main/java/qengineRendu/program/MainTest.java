@@ -4,9 +4,7 @@ import qengineRendu.program.parser.Parser;
 import qengineRendu.program.parser.QueryParser;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
-import qengineRendu.program.utils.Dictionary;
 import qengineRendu.program.utils.FilePath;
-import qengineRendu.program.utils.Index;
 import qengineRendu.program.utils.TypeIndex;
 
 import java.io.IOException;
@@ -41,8 +39,8 @@ public class MainTest {
 //            "http://schema.org/birthDate");
 //            System.out.println(returnedValue);
 
-            QueryParser queryParser = new QueryParser();
-            queryParser.parse(fileManagement.getBasUrl(), fileManagement.getQueryFile());
+            QueryParser queryParser = new QueryParser(fileManagement);
+            queryParser.parse(2);
         }
 
 }

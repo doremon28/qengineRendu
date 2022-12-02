@@ -8,10 +8,7 @@ import qengineRendu.program.utils.Dictionary;
 import qengineRendu.program.utils.Index;
 import qengineRendu.program.utils.TypeIndex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     Logger logger = LoggerFactory.getLogger(DictionaryIndexesServiceImpl.class);
@@ -29,7 +26,7 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     }
 
     @Override
-    public void searchFromDictionaryByIndexesObjects(List<String> statement,List<Long> res, boolean isFirstPattern) {
+    public void searchFromDictionaryByIndexesObjects(List<String> statement, HashSet<Long> res, boolean isFirstPattern) {
         if(statement.size() != 3){
             return;
         }
