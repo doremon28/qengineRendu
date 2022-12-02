@@ -29,48 +29,55 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     }
 
     @Override
-    public String searchFromDictionaryByIndexesObjects(List<String> statement) {
+    public void searchFromDictionaryByIndexesObjects(List<String> statement,List<Long> res, boolean isFirstPattern) {
         if(statement.size() != 3){
-            return null;
+            return;
         }
         Map<Long, Map<Long, List<Long>>> resIndex;
-        StringBuilder result = new StringBuilder();
-
         if(statement.get(0) != null && statement.get(1) != null && statement.get(2) == null){
             resIndex = index.getIndexesByType(TypeIndex.SPO);
             Long subjectIndex = dictionary.encode(statement.get(0));
             Long predicateIndex = dictionary.encode(statement.get(1));
             List<Long> objects = resIndex.get(subjectIndex).get(predicateIndex);
-            if(objects != null){
-                objects.forEach(object -> result.append(dictionary.decode(object)).append(" "));
-            }else{
-                logger.error("No objects found for subject+"+statement.get(0)+" and predicate "+statement.get(1));
+            if (objects != null) {
+                if(isFirstPattern){
+                    res.addAll(objects);
+                }else{
+                    res.retainAll(objects);
+                }
+            }else {
+                res.clear();
             }
-
         }else if(statement.get(0) != null && statement.get(1) == null && statement.get(2) != null) {
-            resIndex = index.getIndexesByType(TypeIndex.SOP);
-            Long subjectIndex = dictionary.encode(statement.get(0));
-            Long objectIndex = dictionary.encode(statement.get(2));
-            List<Long> predicates = resIndex.get(subjectIndex).get(objectIndex);
-            if(predicates != null){
-                predicates.forEach(predicate -> result.append(dictionary.decode(predicate)).append("\n"));
-            }else{
-                logger.error("No predicates found for subject "+statement.get(0)+" and object "+ statement.get(2));
-            }
+                resIndex = index.getIndexesByType(TypeIndex.SOP);
+                Long subjectIndex = dictionary.encode(statement.get(0));
+                Long objectIndex = dictionary.encode(statement.get(2));
+                List<Long> predicates = resIndex.get(subjectIndex).get(objectIndex);
+                if (predicates != null) {
+                    if(isFirstPattern){
+                        res.addAll(predicates);
+                    }else{
+                        res.retainAll(predicates);
+                    }
+                } else {
+                    res.clear();
+                }
 
         }else if(statement.get(0) == null && statement.get(1) != null && statement.get(2) != null) {
             resIndex = index.getIndexesByType(TypeIndex.POS);
             Long predicateIndex = dictionary.encode(statement.get(1));
             Long objectIndex = dictionary.encode(statement.get(2));
             List<Long> subjects = resIndex.get(predicateIndex).get(objectIndex);
-            if(subjects != null) {
-                subjects.forEach(subject -> result.append(dictionary.decode(subject)).append("\n"));
+            if (subjects != null) {
+                if(isFirstPattern){
+                    res.addAll(subjects);
+                }else{
+                    res.retainAll(subjects);
+                }
             }else{
-                logger.error("No subjects found for predicate " + statement.get(1) + " and object " + statement.get(2));
+                res.clear();;
             }
-
         }
-        return result.toString();
     }
 
 //    public Map<Long, Map<Long, List<Long>>> getMapIndex(List<String> statement){
@@ -122,11 +129,11 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
 
     @Override
     public void addEntryFromStatement(TypeIndex typeIndex, Statement st) {
-        Long [] triplet = new Long[3];
+//        Long [] triplet = new Long[3];
 //        tripletSPO[0] = (dictionary.addEntry(st.getSubject().stringValue()));
 //        tripletSPO[1] = (dictionary.addEntry(st.getPredicate().stringValue()));
 //        tripletSPO[2] = (dictionary.addEntry(st.getObject().stringValue()));
-        triplet = addEntryFromStatementDependingToType(typeIndex, st);
+        Long [] triplet = addEntryFromStatementDependingToType(typeIndex, st);
         generateSPOIndexes(typeIndex, triplet);
     }
 

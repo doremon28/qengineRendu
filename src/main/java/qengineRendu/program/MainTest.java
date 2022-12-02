@@ -21,6 +21,8 @@ public class MainTest {
      * @throws IOException the io exception
      */
     public static void main(String[] args) throws IOException {
+
+
             FilePath fileManagement = new FilePath("C:\\Users\\SCD UM\\Documents\\M2 GL\\qengineRendu\\data\\");
             Parser parser = new Parser(fileManagement);
             parser.parse();

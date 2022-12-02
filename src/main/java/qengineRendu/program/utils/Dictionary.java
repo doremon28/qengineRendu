@@ -24,17 +24,17 @@ public class Dictionary {
 
 
     public String decode(Long index) {
-        if(dictionaryMap.get(index) != null) {
-            return dictionaryMap.get(index);
-        } else {
-            logger.error("Index not found in dictionary");
-            return null;
-        }
-//        return dictionaryMap.get(index);
+        return dictionaryMap.get(index);
     }
 
     public Long encode(String value) {
         return dictionaryMap.inverse().get(value);
+    }
+
+    public List<String> decodeList(List<Long> indexes) {
+        List<String> result = new ArrayList<>();
+        indexes.forEach(index -> result.add(dictionaryMap.get(index)));
+        return result;
     }
 
     /**

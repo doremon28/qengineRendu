@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface IDictionaryIndexesService {
     String searchFromDictionaryByIndexesObjects(String subject, String predicate);
-    String searchFromDictionaryByIndexesObjects(List<String> statement);
+    void searchFromDictionaryByIndexesObjects(List<String> statement,List<Long> res, boolean isFirstPattern);
     void generateSPOIndexes(TypeIndex typeIndex, Long[] indexes);
     void generatePOSIndexes(Long[] indexes);
     void generateSOPIndexes(Long[] indexes);
