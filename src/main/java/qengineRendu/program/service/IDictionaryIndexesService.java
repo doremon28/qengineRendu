@@ -6,17 +6,15 @@ import qengineRendu.program.utils.TypeIndex;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IDictionaryIndexesService {
     String searchFromDictionaryByIndexesObjects(String subject, String predicate);
-    void searchFromDictionaryByIndexesObjects(List<String> statement, HashSet<Long> res, boolean isFirstPattern);
+    void searchFromDictionaryByIndexesObjects(String[] statement, Set<Long> res, boolean isFirstPattern);
     void generateSPOIndexes(TypeIndex typeIndex, Long[] indexes);
-    void generatePOSIndexes(Long[] indexes);
-    void generateSOPIndexes(Long[] indexes);
-
     void addEntryFromStatement(TypeIndex typeIndex, Statement st);
     Map<Long, String> getDictionary();
-    Map<Long, Map<Long, List<Long>>> getIndexesByType(TypeIndex typeIndex);
+    Map<Long, Map<Long, Set<Long>>> getIndexesByType(TypeIndex typeIndex);
 
 
 }

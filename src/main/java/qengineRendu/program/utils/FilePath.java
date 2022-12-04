@@ -2,22 +2,19 @@ package qengineRendu.program.utils;
 
 public class FilePath {
 	private final String basUrl;
-	private final String workingDir;
 	private final String queryFile;
 	private final String dataFile;
+	private final String outputFolder;
 
-	public FilePath(String workingDir) {
+	public FilePath(String queryFile, String dataFile, String outputFolder) {
 		this.basUrl = null;
-		this.workingDir = workingDir;
-		this.queryFile = workingDir + "sample_query.queryset";
-		this.dataFile = workingDir + "100K.nt";
+		this.queryFile = queryFile;
+		this.dataFile = dataFile;
+		this.outputFolder = outputFolder;
 	}
 
 	public String getBasUrl() {
 		return basUrl;
-	}
-	public String getWorkingDir() {
-		return workingDir;
 	}
 	public String getQueryFile() {
 		return queryFile;
@@ -25,5 +22,8 @@ public class FilePath {
 	public String getDataFile() {
 		return dataFile;
 	}
-	
+
+	public String getOutputFolder() {
+		return outputFolder;
+	}
 }

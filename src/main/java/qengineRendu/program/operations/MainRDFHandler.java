@@ -30,7 +30,6 @@ public class MainRDFHandler extends AbstractRDFHandler{
 
 	@Override
 	public void handleStatement(Statement st) throws RDFHandlerException {
-		//System.out.println("\n" + st.getSubject() + "\t " + st.getPredicate() + "\t " + st.getObject());
 		dictionaryBiMap(TypeIndex.SOP, st);
 		dictionaryBiMap(TypeIndex.SPO, st);
 		dictionaryBiMap(TypeIndex.POS, st);
