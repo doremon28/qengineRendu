@@ -6,54 +6,26 @@ import qengineRendu.program.parser.Parser;
 import qengineRendu.program.parser.QueryParser;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
-import qengineRendu.program.utils.FilePath;
-import qengineRendu.program.utils.StatisticQuery;
-import qengineRendu.program.utils.TypeIndex;
+import qengineRendu.program.utils.*;
 
 import java.io.*;
 
 
 public class MainTest {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(MainTest.class);
+
     public static void main(String[] args) throws Exception {
-        Options options = new Options();
-
-        Option queries = new Option("q", "queries", true, "chemin vers dossier requetes");
-        queries.setRequired(true);
-        options.addOption(queries);
-
-        Option data = new Option("d", "data", true, "chemin vers fichier donnees");
-        data.setRequired(true);
-        options.addOption(data);
-
-        Option output = new Option("o", "output", true, "chemin vers dossier sortie");
-        output.setRequired(true);
-        options.addOption(output);
-
-        Option jenaActivation = new Option("j", "jena", true, "active la vérification de la correction et complétude du système\n" +
-                "en utilisant Jena comme un oracle");
-        jenaActivation.setRequired(true);
-        options.addOption(jenaActivation);
-
-        Option warm = new Option("w", "warm", true, "utilise un échantillon des requêtes en entrée (prises\n" +
-                "au hasard) correspondant au pourcentage X pour chauffer le système");
-        warm.setRequired(false);
-        options.addOption(warm);
-
-        Option shuffle = new Option("s", "shuffle", true, " considère une permutation aléatoire des requêtes en entrée");
-        shuffle.setRequired(false);
-        options.addOption(shuffle);
-
+        long startTimeWorkload = System.nanoTime();
+        OptionsCli optionsCli = new OptionsCli();
         CommandLineParser parserCli = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
-        CommandLine cmd = null;//not a good practice, it serves it purpose
-
+        CommandLine cmd = null;
+        Options options = optionsCli.getOptions();
         try {
             cmd = parserCli.parse(options, args);
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             formatter.printHelp("utility-name", options);
-
             System.exit(1);
         }
 
@@ -69,13 +41,10 @@ public class MainTest {
         logger.info("jenaActivationOption: {}", jenaActivationOption);
         logger.info("warmOption: {}", warmOption);
         logger.info("shuffleOption: {}", shuffleOption);
-
-
         FilePath fileManagement = new FilePath(queriesFilePath, dataFilePath, outputFilePath);
         Parser parser = new Parser(fileManagement);
         parser.parse();
         QueryParser queryParser = new QueryParser(fileManagement);
-        queryParser.readQueries();
         if (shuffleOption != null && shuffleOption.equals("true")) {
             logger.info("Shuffle option activated");
             queryParser.shuffelQueries();
@@ -84,26 +53,21 @@ public class MainTest {
             logger.info("Warming up the system");
             queryParser.warmUpQueries(Integer.parseInt(warmOption));
         }
-
         if (jenaActivationOption.equals("true")) {
+            logger.info("Jena activation option activated");
             queryParser.parse(2);
         } else {
+            logger.info("Jena activation option deactivated");
             queryParser.parse(1);
         }
 
-        try (Writer outputFile = new BufferedWriter(new FileWriter(fileManagement.getOutputFolder() + File.separator + "file.txt", false))) {
-            StatisticQuery.getStatisticQueries().stream().map(StatisticQuery::toString).forEach(s -> {
-                try {
-                    outputFile.write(s);
-                    outputFile.write("\n\n\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+        logger.info(" le temps total d’évaluation du workload est de {} ms", 15);
+        logger.info(" le nombre total de requêtes évaluées est de {}", StatisticQuery.getTotalTimeExecutionInFiles());
+        if (outputFilePath != null && !outputFilePath.isEmpty()) {
+            fileManagement.generateFile(2);
         }
-        logger.info(" le temps total d’évaluation du workload est de {} ms", StatisticQuery.getTotalTimeExecution());
+        long endTimeWorkload = System.nanoTime();
+        StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload);
 
     }
 

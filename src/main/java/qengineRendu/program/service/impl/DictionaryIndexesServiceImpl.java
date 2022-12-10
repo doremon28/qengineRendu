@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.utils.Dictionary;
 import qengineRendu.program.utils.Index;
+import qengineRendu.program.utils.StatisticData;
 import qengineRendu.program.utils.TypeIndex;
 
 import java.util.*;
@@ -78,7 +79,7 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     }
 
     @Override
-    public void generateSPOIndexes(TypeIndex typeIndex, Long[] indexes) {
+    public void generateIndexes(TypeIndex typeIndex, Long[] indexes) {
         switch (typeIndex) {
             case SPO:
                 index.getIndexesByType(TypeIndex.SPO).putIfAbsent(indexes[0], new HashMap<>());
@@ -103,8 +104,16 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
 
     @Override
     public void addEntryFromStatement(TypeIndex typeIndex, Statement st) {
+        long startDocCreation = System.nanoTime();
         Long[] triplet = addEntryFromStatementDependingToType(typeIndex, st);
-        generateSPOIndexes(typeIndex, triplet);
+        long endDocCreation = System.nanoTime();
+        StatisticData.creatingDictionary = (endDocCreation - startDocCreation) / 1_000_000.0;
+        logger.info("Time to create document : {} ms",  StatisticData.creatingDictionary);
+        long startIndexCreation = System.nanoTime();
+        generateIndexes(typeIndex, triplet);
+        long endIndexCreation = System.nanoTime();
+        StatisticData.creatingIndexes = (endIndexCreation - startIndexCreation) / 1_000_000.0;
+        logger.info("Time to create index : {} ms",  StatisticData.creatingIndexes);
     }
 
 

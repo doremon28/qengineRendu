@@ -1,0 +1,2 @@
+"fichier_données","dossier_requêtes","nombre_triplets_RDF","nombre_requêtes","temps_lecture_données","temps_lecture_requêtes","temps_creation_dico","temps_creation_index","temps_total_evaluation","temps_total"
+"D:\java\master-nosql\qengineRendu\data\100K.nt","D:\java\master-nosql\qengineRendu\data","3","1203","5058.1149","0.0 ms","1.0E-4 ms","3.0E-4","433.57210000000043 ms","0.0 ms"

@@ -31,12 +31,6 @@ public class Dictionary {
         return dictionaryMap.inverse().get(value);
     }
 
-    public List<String> decodeList(Set<Long> indexes) {
-        List<String> result = new ArrayList<>();
-        indexes.forEach(index -> result.add(dictionaryMap.get(index)));
-        return result;
-    }
-
     /**
      * Add single entry subject | predict | object.
      *
