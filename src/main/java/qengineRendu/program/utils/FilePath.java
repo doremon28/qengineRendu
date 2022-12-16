@@ -112,6 +112,36 @@ public class FilePath {
         }
     }
 
+    public void repairFileQueriesFormat(String filePath){
+        // Read file
+        Path pathFile = Paths.get(filePath);
+        try (Stream<String> fileLines = Files.lines(pathFile)) {
+            List<String> lines = fileLines.collect(Collectors.toList());=
+            AtomicBoolean queryIsCorrect = new AtomicBoolean(false);
+            // Check if the query is closed by accolade
+            lines.forEach(line -> {
+                if(line.contains("}")){
+                    queryIsCorrect.set(true);
+                }
+            });
+            // If the query is not closed by accolade, we add it
+            if(queryIsCorrect.get()){
+                logger.info("The file {} is already in the correct format", pathFile.getFileName());
+            }else{
+                for(int i=0; i<lines.size()-1; i++){
+                    String line = lines.get(i);
+                    if(lines.get(i+1).contains("SELECT")){
+                        lines.set(i, line+"}\n");
+                    }
+                }
+                logger.info("The file {} is now in the correct format", pathFile.getFileName());
+            }
+            Files.write(pathFile, lines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Map<String, List<String>> getFilesQueries() {
 
         if (this.queryDir == null) {
