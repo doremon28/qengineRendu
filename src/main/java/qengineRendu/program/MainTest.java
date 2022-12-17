@@ -67,7 +67,7 @@ public class MainTest {
             fileManagement.generateFile(2);
         }
         long endTimeWorkload = System.nanoTime();
-        StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload);
+        StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload) / 1_000_000.0;
 
     }
 
