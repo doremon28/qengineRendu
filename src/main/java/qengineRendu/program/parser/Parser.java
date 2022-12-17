@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 
 import qengineRendu.program.operations.MainRDFHandler;
 import qengineRendu.program.utils.FilePath;
+import qengineRendu.program.utils.StatisticData;
 
 /**
  * The type Parser.
@@ -54,7 +55,11 @@ public class Parser {
 				rdfParser.setRDFHandler(new MainRDFHandler());
 
 				// Parsing et traitement de chaque triple par le handler
+				long startTimeReadingData = System.nanoTime();
 				rdfParser.parse(dataReader, fileManagement.getBasUrl());
+				long endTimeReadingData = System.nanoTime();
+				StatisticData.timeReadingData = (endTimeReadingData - startTimeReadingData) / 1_000_000.0;
+				logger.info("Reading data time: {} ms", StatisticData.timeReadingData);
 			}
 		} else {
 			logger.error("Error: fileManagement is null or dataFile is empty");

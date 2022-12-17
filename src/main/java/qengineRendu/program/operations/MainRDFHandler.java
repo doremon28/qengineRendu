@@ -6,6 +6,7 @@ import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 import qengineRendu.program.utils.Dictionary;
+import qengineRendu.program.utils.TypeIndex;
 
 public class MainRDFHandler extends AbstractRDFHandler{
 	IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
@@ -29,8 +30,9 @@ public class MainRDFHandler extends AbstractRDFHandler{
 
 	@Override
 	public void handleStatement(Statement st) throws RDFHandlerException {
-		//System.out.println("\n" + st.getSubject() + "\t " + st.getPredicate() + "\t " + st.getObject());
-		dictionaryBiMap(st);
+		dictionaryBiMap(TypeIndex.SOP, st);
+		dictionaryBiMap(TypeIndex.SPO, st);
+		dictionaryBiMap(TypeIndex.POS, st);
 		super.handleStatement(st);
 	}
 
@@ -40,8 +42,8 @@ public class MainRDFHandler extends AbstractRDFHandler{
 		super.handleComment(comment);
 	}
 
-	private void dictionaryBiMap(Statement st) {
-		dictionaryIndexesService.addEntryFromStatement(st);
+	private void dictionaryBiMap(TypeIndex typeIndex, Statement st) {
+		dictionaryIndexesService.addEntryFromStatement(typeIndex, st);
 	}
 
 }
