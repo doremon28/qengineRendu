@@ -116,7 +116,7 @@ public class FilePath {
         // Read file
         Path pathFile = Paths.get(filePath);
         try (Stream<String> fileLines = Files.lines(pathFile)) {
-            List<String> lines = fileLines.collect(Collectors.toList());=
+            List<String> lines = fileLines.collect(Collectors.toList());
             AtomicBoolean queryIsCorrect = new AtomicBoolean(false);
             // Check if the query is closed by accolade
             lines.forEach(line -> {
