@@ -64,10 +64,8 @@ public class QueryParser {
         return queryResult;
     }
 
-    public void shuffelQueries() {
-        for (Map.Entry<String, List<String>> entry : queriesDictionary.entrySet()) {
-            Collections.shuffle(entry.getValue());
-        }
+    public void shuffleQueries() {
+        queriesDictionary.forEach((k, v) -> Collections.shuffle(v));
     }
 
     /**
