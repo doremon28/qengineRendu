@@ -66,7 +66,6 @@ public class FilePath {
      */
     private void generateFileCsvStatistics() throws IOException {
         logger.info("Generating CSV file for general information................................");
-        generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
         logger.info("Generale file generated");
         try (Writer outputFile = new BufferedWriter(new FileWriter(this.outputFolder + File.separator + "fileStatistics.csv", false))) {
             logger.info("Generating fileStatistics.csv..........................");
@@ -113,6 +112,7 @@ public class FilePath {
             generateFileTxtStatistics();
         } else if (choice == 2) {
             generateFileCsvStatistics();
+            generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
         }
     }
 
