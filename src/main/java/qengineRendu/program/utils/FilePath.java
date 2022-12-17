@@ -58,6 +58,12 @@ public class FilePath {
 
     }
 
+    /**
+     * Generate 2 files csv statistics.
+     * file 1 : (general_information.csv) general information about the workload
+     * file 2 : (fileStatistics.csv) statistics about each query
+     * @throws IOException the io exception
+     */
     private void generateFileCsvStatistics() throws IOException {
         logger.info("Generating CSV file for general information................................");
         generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
@@ -65,10 +71,8 @@ public class FilePath {
         try (Writer outputFile = new BufferedWriter(new FileWriter(this.outputFolder + File.separator + "fileStatistics.csv", false))) {
             logger.info("Generating fileStatistics.csv..........................");
             StatisticQuery
-                    .getAllValuesInFiles()
+                    .getStatisticsQueriesCsv()
                     .stream()
-                    .map(StatisticQuery::getStatisticsQueriesCsv)
-                    .flatMap(List::stream)
                     .map(s -> String.join(";", s))
                     .forEach(s -> {
                         try {

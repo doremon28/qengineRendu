@@ -16,10 +16,10 @@ public class StatisticQuery {
     private final int queryNumber;
     private final double timeReadingQuery;
 
-    public List<String[]> getStatisticsQueriesCsv() {
+    public static List<String[]> getStatisticsQueriesCsv() {
         List<String[]> res = new ArrayList<>();
         res.add(new String[]{"File Name", "Query name", "Query number", "Time execution",});
-        statisticQueriesInFile
+        getAllValuesInFiles()
                 .stream()
                 .map(s -> new String[]{
                         String.valueOf(s.getFileName()),
