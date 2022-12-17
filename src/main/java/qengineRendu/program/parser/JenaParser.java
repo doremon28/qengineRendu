@@ -3,9 +3,12 @@ package qengineRendu.program.parser;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
+import qengineRendu.program.utils.StatisticQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class JenaParser {
     private static final Model model = ModelFactory.createDefaultModel();
@@ -23,10 +26,12 @@ public class JenaParser {
             ResultSet results = qexec.execSelect();
             while (results.hasNext()) {
                 QuerySolution soln = results.nextSolution();
+                int i = 0;
                 soln.varNames().forEachRemaining(var -> queryResults.add(soln.get(var).toString()));
             }
         }
-        return queryResults;
+        StatisticQuery.incrementQueriesNumberWithoutResponses((int) queryResults.stream().filter(Objects::isNull).count());
+        return queryResults.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 }

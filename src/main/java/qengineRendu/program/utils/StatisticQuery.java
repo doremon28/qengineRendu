@@ -16,6 +16,8 @@ public class StatisticQuery {
     private final int queryNumber;
     private final double timeReadingQuery;
 
+    private static int queriesNumberWithoutResponses = 0;
+
     public List<String[]> getStatisticsQueriesCsv() {
         List<String[]> res = new ArrayList<>();
         res.add(new String[]{"File Name", "Query name", "Query number", "Time execution",});
@@ -76,6 +78,17 @@ public class StatisticQuery {
 
     public static Map<String, List<StatisticQuery>> getStatisticQueriesInFiles() {
         return statisticQueriesInFiles;
+    }
+
+    public static int getQueriesNumberWithoutResponses() {
+        return queriesNumberWithoutResponses;
+    }
+
+    public static void incrementQueriesNumberWithoutResponses(int increment) {
+        queriesNumberWithoutResponses += increment;
+    }
+    public static void incrementQueriesNumberWithoutResponsesByOne() {
+        queriesNumberWithoutResponses++;
     }
 
 

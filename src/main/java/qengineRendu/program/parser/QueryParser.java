@@ -9,12 +9,7 @@ import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 import qengineRendu.program.utils.FilePath;
 import qengineRendu.program.utils.StatisticQuery;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class QueryParser {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(QueryParser.class);
@@ -30,7 +25,7 @@ public class QueryParser {
         jenaParser = new JenaParser(fileManagement.getDataFile());
     }
 
-    public void myParser(String queryString, String baseURI) {
+    public void myParser(String queryString, String baseURI, int queriesWithoutResponse) {
         ParsedQuery query = sparqlParser.parseQuery(queryString, baseURI);
         List<String[]> queryResult = processAQuery(query);
         Set<Long> queryExecutionResult = new HashSet<>();
@@ -48,7 +43,6 @@ public class QueryParser {
             new StatisticQuery(fileName, queries.get(j), endTime - startTime, j+1);
             logger.info("Query {} parsed in {} ms", j + 1, ((endTime - startTime) / 1_000_000.0));
         }
-
     }
 
     public List<String[]> processAQuery(ParsedQuery query) {
@@ -83,9 +77,10 @@ public class QueryParser {
             case 1:
                 for (Map.Entry<String, List<String>> entry : queriesDictionary.entrySet()) {
                     logger.info("Processing query file {} of {} queries", entry.getKey(), entry.getValue().size());
+                    int queriesWithoutResponse = 0;
                     for (int j = 0; j < entry.getValue().size(); j++) {
                         Long startTime = System.nanoTime();
-                        myParser(entry.getValue().get(j), null);
+                        myParser(entry.getValue().get(j), null, queriesWithoutResponse);
                         Long endTime = System.nanoTime();
                         new StatisticQuery(entry.getKey(), entry.getValue().get(j), endTime - startTime, j + 1);
                         logger.info("Query {} parsed in {} ms", j + 1, ((endTime - startTime) / 1_000_000.0));

@@ -48,10 +48,15 @@ public class FilePath {
         FileWriter outputfile = new FileWriter(filePath);
         CSVWriter writer = new CSVWriter(outputfile);
         int nbQueries = StatisticQuery.getTotalQueryNumberInFiles();
+        int nbQueriesWithoutResponse = StatisticQuery.getQueriesNumberWithoutResponses();
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
         int nbTriples = 3;
-        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "temps_lecture_données", "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
-        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(StatisticData.timeReadingData), StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary + " ms", String.valueOf(StatisticData.creatingIndexes), timeToEvaluateQueries+" ms", StatisticData.timeWorkload + " ms"};
+        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_requêtes_sans_réponses",
+                 "temps_lecture_données", "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index",
+                "temps_total_evaluation", "temps_total",};
+        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(nbQueriesWithoutResponse),
+                 String.valueOf(StatisticData.timeReadingData), StatisticData.timeReadingQueries + " ms",
+                StatisticData.creatingDictionary + " ms", String.valueOf(StatisticData.creatingIndexes), timeToEvaluateQueries+" ms", StatisticData.timeWorkload + " ms"};
         writer.writeNext(header);
         writer.writeNext(data);
         writer.close();
@@ -63,7 +68,7 @@ public class FilePath {
         generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
         logger.info("Generale file generated");
         try (Writer outputFile = new BufferedWriter(new FileWriter(this.outputFolder + File.separator + "fileStatistics.csv", false))) {
-            logger.info("Generating fileStatistics.csv..........................");
+            logger.info("Generating fileStatistics.csv...");
             StatisticQuery
                     .getAllValuesInFiles()
                     .stream()
