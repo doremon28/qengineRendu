@@ -47,7 +47,7 @@ public class MainTest {
         QueryParser queryParser = new QueryParser(fileManagement);
         if (shuffleOption != null && shuffleOption.equals("true")) {
             logger.info("Shuffle option activated");
-            queryParser.shuffelQueries();
+            queryParser.shuffleQueries();
         }
         if (warmOption != null && !warmOption.isEmpty()) {
             logger.info("Warming up the system");
@@ -60,7 +60,6 @@ public class MainTest {
             logger.info("Jena activation option deactivated");
             queryParser.parse(1);
         }
-
         logger.info(" le temps total d’évaluation du workload est de {} ms", 15);
         logger.info(" le nombre total de requêtes évaluées est de {}", StatisticQuery.getTotalTimeExecutionInFiles());
         if (outputFilePath != null && !outputFilePath.isEmpty()) {
