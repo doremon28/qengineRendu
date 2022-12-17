@@ -60,14 +60,13 @@ public class MainTest {
             logger.info("Jena activation option deactivated");
             queryParser.parse(1);
         }
-        logger.info(" le temps total d’évaluation du workload est de {} ms", 15);
         logger.info(" le nombre total de requêtes évaluées est de {}", StatisticQuery.getTotalTimeExecutionInFiles());
+        long endTimeWorkload = System.nanoTime();
+        StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload) / 1_000_000.0;
+        logger.info(" le temps total d’évaluation du workload est de {} ms", StatisticData.timeWorkload);
         if (outputFilePath != null && !outputFilePath.isEmpty()) {
             fileManagement.generateFile(2);
         }
-        long endTimeWorkload = System.nanoTime();
-        StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload) / 1_000_000.0;
-
     }
 
 }
