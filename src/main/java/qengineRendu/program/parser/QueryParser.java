@@ -70,10 +70,15 @@ public class QueryParser {
         }
     }
 
+    /**
+     * Warm up queries.
+     *
+     * @param prc the percentage of queries to warm up.
+     */
     public void warmUpQueries(int prc) {
         shuffelQueries();
         for (Map.Entry<String, List<String>> entry : queriesDictionary.entrySet()) {
-            entry.getValue().subList(0, (prc * entry.getValue().size()) / 100);
+            entry.setValue(entry.getValue().subList(0, (prc * entry.getValue().size()) / 100));
         }
 
     }
