@@ -107,13 +107,11 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
         long startDocCreation = System.nanoTime();
         Long[] triplet = addEntryFromStatementDependingToType(typeIndex, st);
         long endDocCreation = System.nanoTime();
-        StatisticData.creatingDictionary = (endDocCreation - startDocCreation) / 1_000_000.0;
-        logger.info("Time to create document : {} ms",  StatisticData.creatingDictionary);
+        StatisticData.creatingDictionary = StatisticData.creatingDictionary + (endDocCreation - startDocCreation) / 1_000_000.0;
         long startIndexCreation = System.nanoTime();
         generateIndexes(typeIndex, triplet);
         long endIndexCreation = System.nanoTime();
-        StatisticData.creatingIndexes = (endIndexCreation - startIndexCreation) / 1_000_000.0;
-        logger.info("Time to create index : {} ms",  StatisticData.creatingIndexes);
+        StatisticData.creatingIndexes = StatisticData.creatingIndexes + (endIndexCreation - startIndexCreation) / 1_000_000.0;
     }
 
 
