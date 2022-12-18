@@ -118,39 +118,51 @@ public class FilePath {
         }
     }
 
+    public Map<Integer, Integer> getPatternsNumberForEachQuery(Collection<List<String>> listQueries){
+        Map<Integer, Integer> patternsNumberMap = new HashMap<>();
+        for(List<String> queries: listQueries){
+            for(String query: queries){
+                int patternNumber = 0;
+                for(String line: query.split("\\t")){
+                    if(line.contains("?v0 <")){
+                        patternNumber++;
+                    }
+                }
+                int count = patternsNumberMap.getOrDefault(patternNumber, 0);
+                patternsNumberMap.put(patternNumber, count + 1);
+            }
+        }
+        return patternsNumberMap;
+    }
+
     public void repairFileQueriesFormat(String filePath){
         // Read file
         Path pathFile = Paths.get(filePath);
         try (Stream<String> fileLines = Files.lines(pathFile)) {
             List<String> lines = fileLines.collect(Collectors.toList());
-            AtomicBoolean queryIsCorrect = new AtomicBoolean(false);
             // Check if the query is closed by accolade
-            lines.forEach(line -> {
+            for(String line: lines){
                 if(line.contains("}")){
-                    queryIsCorrect.set(true);
                     return;
                 }
-            });
-            // If the query is not   closed by accolade, we add it
-            if(!queryIsCorrect.get()){
-                for(int i=1; i<lines.size()-1; i++){
-                    String line = lines.get(i);
-                    if(lines.get(i+1).contains("SELECT")){
-                        lines.set(i, line+"}\n");
-                    }
+            }
+            // If the query is not closed by accolade, we add it
+            for(int i=1; i<lines.size()-1; i++){
+                String line = lines.get(i);
+                if(lines.get(i+1).contains("SELECT")){
+                    lines.set(i, line+"\n}");
+                }else if(i==lines.size()-2){
+                    lines.set(i+1, line+"\n}");
                 }
-                logger.info("The file {} is now in the correct format", pathFile.getFileName());
-            }else{
-                logger.info("The file {} is already in the correct format", pathFile.getFileName());
             }
             Files.write(pathFile, lines);
+            logger.info("The file {} is now in the correct format", pathFile.getFileName());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public Map<String, List<String>> getFilesQueries() {
-
         if (this.queryDir == null) {
             return Collections.emptyMap();
         }
@@ -170,6 +182,7 @@ public class FilePath {
                 Map<String, List<String>> fileQueries = listOfValidQueriesFiles.stream().collect(Collectors.toMap(File::getName,
                         file -> handleFileQueries(file.getAbsolutePath())));
                 getNbrOfDupilcatedQueries(fileQueries.values());
+                logger.info("Patterns number for each query: {}", getPatternsNumberForEachQuery(fileQueries.values()));
                 return fileQueries;
             } else {
                 logger.error("No files in folder {}", folderPath);

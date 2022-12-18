@@ -1,7 +1,6 @@
 package qengineRendu.program.utils;
 
 import org.slf4j.Logger;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,13 +8,10 @@ public class StatisticQuery {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(StatisticQuery.class);
     private static final Map<String, List<StatisticQuery>> statisticQueriesInFiles = new HashMap<>();
     private static final List<StatisticQuery> statisticQueriesInFile = new ArrayList<>();
-
     private final String fileName;
     private final String queryName;
-
     private final int queryNumber;
     private final double timeReadingQuery;
-
     private static int queriesNumberWithoutResponses = 0;
 
     public List<String[]> getStatisticsQueriesCsv() {

@@ -25,7 +25,7 @@ public class QueryParser {
         jenaParser = new JenaParser(fileManagement.getDataFile());
     }
 
-    public void myParser(String queryString, String baseURI, int queriesWithoutResponse) {
+    public void myParser(String queryString, String baseURI) {
         ParsedQuery query = sparqlParser.parseQuery(queryString, baseURI);
         List<String[]> queryResult = processAQuery(query);
         Set<Long> queryExecutionResult = new HashSet<>();
@@ -35,7 +35,7 @@ public class QueryParser {
         }
     }
 
-    public void jenaParse(String fileName, List<String> queries) throws Exception {
+    public void jenaParse(String fileName, List<String> queries)  {
         for (int j = 0; j < queries.size(); j++) {
             Long startTime = System.nanoTime();
             jenaParser.jenaParser(queries.get(j));
@@ -72,18 +72,17 @@ public class QueryParser {
 
     }
 
-    public void parse(int parserNumber) throws Exception {
+    public void parse(int parserNumber)  {
         switch (parserNumber) {
             case 1:
                 for (Map.Entry<String, List<String>> entry : queriesDictionary.entrySet()) {
                     logger.info("Processing query file {} of {} queries", entry.getKey(), entry.getValue().size());
-                    int queriesWithoutResponse = 0;
                     for (int j = 0; j < entry.getValue().size(); j++) {
                         Long startTime = System.nanoTime();
-                        myParser(entry.getValue().get(j), null, queriesWithoutResponse);
+                        myParser(entry.getValue().get(j), null);
                         Long endTime = System.nanoTime();
                         new StatisticQuery(entry.getKey(), entry.getValue().get(j), endTime - startTime, j + 1);
-                        logger.info("Query {} parsed in {} ms", j + 1, ((endTime - startTime) / 1_000_000.0));
+//                        logger.info("Query {} parsed in {} ms", j + 1, ((endTime - startTime) / 1_000_000.0));
                     }
                     logger.info("le temps total de requêtes évaluées dans le fichier {} est de {} ms", entry.getKey(), StatisticQuery.getTotalTimeExecutionStaticInFile());
                     StatisticQuery.getStatisticQueriesInFiles().put(entry.getKey(), new ArrayList<>(StatisticQuery.getStatisticQueriesInFile()));
@@ -97,7 +96,7 @@ public class QueryParser {
                 }
                 break;
             default:
-                System.out.println("Please choose a parser");
+                logger.info("Please choose a parser");
         }
     }
 }
