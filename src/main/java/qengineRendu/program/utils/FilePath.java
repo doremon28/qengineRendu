@@ -51,7 +51,7 @@ public class FilePath {
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
         int nbTriples = 3;
         String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "temps_lecture_données", "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
-        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(StatisticData.timeReadingData), StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary + " ms", String.valueOf(StatisticData.creatingIndexes), timeToEvaluateQueries+" ms", StatisticData.timeWorkload + " ms"};
+        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary + " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries+" ms", StatisticData.timeWorkload + " ms"};
         writer.writeNext(header);
         writer.writeNext(data);
         writer.close();

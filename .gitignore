@@ -14,3 +14,5 @@ target
 .settings
 .idea
 classes
+*.csv
+*.csv
