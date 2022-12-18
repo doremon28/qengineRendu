@@ -155,10 +155,10 @@ public class FilePath {
     }
 
     private Map<String, List<String>> handleFolderFilesQueries(String folderPath) {
-        long readingQueriesStart = System.nanoTime();
         File folder = new File(folderPath);
         List<File> listOfFiles;
         if (folder.isDirectory()) {
+
             listOfFiles = Arrays.stream(Objects.requireNonNull(folder.listFiles())).collect(Collectors.toList());
             if (!listOfFiles.isEmpty()) {
                 List<File> listOfValidQueriesFiles = listOfFiles.stream().filter(file -> file.getName().endsWith(".queryset")).collect(Collectors.toList());
@@ -167,9 +167,6 @@ public class FilePath {
                 logger.error("No files in folder {}", folderPath);
                 System.exit(1);
             }
-            long readingQueriesEnd = System.nanoTime();
-            StatisticData.timeReadingQueries = (readingQueriesEnd - readingQueriesStart) / 1_000_000.0;
-            logger.info("Time to read queries : {} ms", StatisticData.timeReadingQueries);
         } else {
             logger.error("Folder {} is not a directory", folderPath);
             System.exit(1);

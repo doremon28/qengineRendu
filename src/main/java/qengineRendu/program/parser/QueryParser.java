@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 import qengineRendu.program.utils.FilePath;
+import qengineRendu.program.utils.StatisticData;
 import qengineRendu.program.utils.StatisticQuery;
 
 import java.io.*;
@@ -26,7 +27,11 @@ public class QueryParser {
 
     public QueryParser(FilePath fileManagement) {
         this.fileManagement = fileManagement;
+        long readingQueriesStart = System.nanoTime();
         this.queriesDictionary = new HashMap<>(fileManagement.getFilesQueries());
+        long readingQueriesEnd = System.nanoTime();
+        StatisticData.timeReadingQueries = (readingQueriesEnd - readingQueriesStart) / 1_000_000.0;
+        logger.info("Time to read queries : {} ms", StatisticData.timeReadingQueries);
         jenaParser = new JenaParser(fileManagement.getDataFile());
     }
 
