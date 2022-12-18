@@ -4,10 +4,8 @@ import org.eclipse.rdf4j.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qengineRendu.program.service.IDictionaryIndexesService;
+import qengineRendu.program.utils.*;
 import qengineRendu.program.utils.Dictionary;
-import qengineRendu.program.utils.Index;
-import qengineRendu.program.utils.StatisticData;
-import qengineRendu.program.utils.TypeIndex;
 
 import java.util.*;
 
@@ -27,7 +25,8 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     }
 
     @Override
-    public void searchFromDictionaryByIndexesObjects(String[] statement, Set<Long> res, boolean isFirstPattern) {
+    public void searchFromDictionaryByIndexesObjects(String[] statement, Set<Long> res,
+                                                     boolean isFirstPattern) {
         if (statement.length != 3) {
             return;
         }
@@ -35,46 +34,35 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
         if (statement[0] != null && statement[1] != null && statement[2] == null) {
             resIndex = index.getIndexesByType(TypeIndex.SPO);
             Long subjectIndex = dictionary.encode(statement[0]);
-            Long predicateIndex = dictionary.encode(statement[1]);
-            Set<Long> objects = resIndex.get(subjectIndex).get(predicateIndex);
-            if (objects != null) {
-                if (isFirstPattern) {
-                    res.addAll(objects);
-                } else {
-                    res.retainAll(objects);
-                }
-            } else {
-                res.clear();
-            }
+            getFromIndex(statement, res, isFirstPattern,resIndex, subjectIndex);
         } else if (statement[0] != null && statement[1] == null && statement[2] != null) {
             resIndex = index.getIndexesByType(TypeIndex.SOP);
             Long subjectIndex = dictionary.encode(statement[0]);
-            Long objectIndex = dictionary.encode(statement[2]);
-            Set<Long> predicates = resIndex.get(subjectIndex).get(objectIndex);
-            if (predicates != null) {
-                if (isFirstPattern) {
-                    res.addAll(predicates);
-                } else {
-                    res.retainAll(predicates);
-                }
-            } else {
-                res.clear();
-            }
+            getFromIndex(statement, res, isFirstPattern, resIndex, subjectIndex);
 
         } else if (statement[0] == null && statement[1] != null && statement[2] != null) {
             resIndex = index.getIndexesByType(TypeIndex.POS);
             Long predicateIndex = dictionary.encode(statement[1]);
-            Long objectIndex = dictionary.encode(statement[2]);
-            Set<Long> subjects = resIndex.get(predicateIndex).get(objectIndex);
-            if (subjects != null) {
-                if (isFirstPattern) {
-                    res.addAll(subjects);
-                } else {
-                    res.retainAll(subjects);
-                }
+            getFromIndex(statement, res, isFirstPattern, resIndex, predicateIndex);
+
+        }else {
+            logger.error("========== Invalid statement - {} ========== " , Arrays.toString(statement));
+        }
+    }
+
+    private void getFromIndex(String[] statement, Set<Long> res, boolean isFirstPattern,
+                              Map<Long, Map<Long, Set<Long>>> resIndex, Long subjectIndex) {
+        Long objectIndex = dictionary.encode(statement[2]);
+        Set<Long> predicates = resIndex.get(subjectIndex).get(objectIndex);
+        if (predicates != null && !predicates.isEmpty()) {
+            if (isFirstPattern) {
+                res.addAll(predicates);
             } else {
-                res.clear();
+                res.retainAll(predicates);
             }
+        } else {
+            StatisticQuery.incrementQueriesNumberWithoutResponsesByOne();
+            res.clear();
         }
     }
 
