@@ -4,9 +4,22 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 
+/**
+ * The type Options cli.
+ */
 public class OptionsCli {
+    /**
+     * The constant logger.
+     */
     private static final  Logger logger = org.slf4j.LoggerFactory.getLogger(OptionsCli.class);
+    /**
+     * The Options.
+     */
     private final Options options;
+
+    /**
+     * Instantiates a new Options cli.
+     */
     public OptionsCli() {
         Option queries = new Option(OptionData.QUERIES_OPT, OptionData.QUERIES_LONG_OPT, true, OptionData.QUERIES_DESC);
         queries.setRequired(true);
@@ -29,6 +42,11 @@ public class OptionsCli {
         options.addOption(shuffle);
     }
 
+    /**
+     * Gets options.
+     *
+     * @return the options
+     */
     public Options getOptions() {
         if (options == null) {
             logger.info("Options is null");
