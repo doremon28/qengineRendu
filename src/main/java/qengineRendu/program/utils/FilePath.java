@@ -4,10 +4,9 @@ import com.opencsv.CSVWriter;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -138,6 +137,40 @@ public class FilePath {
         }
     }
 
+    /**
+     * Gets nbr of duplicated queries from files.
+     *
+     * @param fileQueries the file queries
+     */
+    private void getNbrOfDupilcatedQueries(Collection<List<String>> fileQueries) {
+        Map<Long, Long> duplicatedQueries = new HashMap<>();
+        if(!fileQueries.isEmpty()){
+            for(List<String> queries : fileQueries){
+                // create a HashMap to store the duplication counts
+                duplicatedQueries.putAll(
+                        (Map<? extends Long, ? extends Long>) queries.stream()
+                                // group the strings by their occurrence count in the list
+                                .collect(Collectors.groupingBy(query -> (long) Collections.frequency(queries, query),
+                                        // count the number of elements in each group
+                                        Collectors.counting()))
+                                // convert the resulting map to a HashMap
+                                .entrySet().stream()
+                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (q1, q2) -> q1, HashMap::new))
+                );
+            }
+            // divide value by corresponding key to get the number of duplicated queries for each number of occurrences
+            duplicatedQueries.forEach((k, v) ->  {
+                if (k > 1)
+                    duplicatedQueries.put(k, v / k);
+            });
+            for (Map.Entry<Long, Long> entry : duplicatedQueries.entrySet()) {
+                logger.info("Number of queries duplicated {} times : {}", entry.getKey(), entry.getValue());
+            }
+        }else{
+            logger.info("No queries to check in the folder {}", this.queryDir);
+        }
+    }
+
 
     /**
      * Gets files queries.
@@ -166,6 +199,9 @@ public class FilePath {
             listOfFiles = Arrays.stream(Objects.requireNonNull(folder.listFiles())).collect(Collectors.toList());
             if (!listOfFiles.isEmpty()) {
                 List<File> listOfValidQueriesFiles = listOfFiles.stream().filter(file -> file.getName().endsWith(".queryset")).collect(Collectors.toList());
+                Map<String, List<String>> fileQueries = listOfValidQueriesFiles.stream().collect(Collectors.toMap(File::getName,
+                        file -> handleFileQueries(file.getAbsolutePath())));
+                getNbrOfDupilcatedQueries(fileQueries.values());
                 return listOfValidQueriesFiles.stream().collect(Collectors.toMap(File::getName, file -> handleFileQueries(file.getAbsolutePath())));
             } else {
                 logger.error("No files in folder {}", folderPath);
