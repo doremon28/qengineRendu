@@ -11,23 +11,47 @@ import qengineRendu.program.utils.FilePath;
 import qengineRendu.program.utils.StatisticData;
 import qengineRendu.program.utils.StatisticQuery;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
+
+/**
+ * Query parser.
+ */
 public class QueryParser {
+    /**
+     * The constant logger.
+     */
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(QueryParser.class);
+    /**
+     * The Dictionary service.
+     */
     IDictionaryIndexesService dictionaryService = new DictionaryIndexesServiceImpl();
+    /**
+     * The Jena parser.
+     */
     private final JenaParser jenaParser;
+    /**
+     * The File management.
+     */
     private final FilePath fileManagement;
+    /**
+     * The constant sparqlParser.
+     */
     private static final SPARQLParser sparqlParser = new SPARQLParser();
+    /**
+     * The Queries dictionary.
+     */
     private final Map<String, List<String>> queriesDictionary;
 
+    /**
+     * Instantiates a new Query parser.
+     *
+     * @param fileManagement the file management
+     */
     public QueryParser(FilePath fileManagement) {
         this.fileManagement = fileManagement;
         long readingQueriesStart = System.nanoTime();
+        // creation of the query dictionary
         this.queriesDictionary = new HashMap<>(fileManagement.getFilesQueries());
         long readingQueriesEnd = System.nanoTime();
         StatisticData.timeReadingQueries = (readingQueriesEnd - readingQueriesStart) / 1_000_000.0;
@@ -35,6 +59,12 @@ public class QueryParser {
         jenaParser = new JenaParser(fileManagement.getDataFile());
     }
 
+    /**
+     * parse the queries via sparqlParser and search on the dictionary by indexes for the result.
+     *
+     * @param queryString the query string
+     * @param baseURI     the base uri
+     */
     public void myParser(String queryString, String baseURI) {
         ParsedQuery query = sparqlParser.parseQuery(queryString, baseURI);
         List<String[]> queryResult = processAQuery(query);
@@ -45,6 +75,13 @@ public class QueryParser {
         }
     }
 
+    /**
+     * Jena parse.
+     *
+     * @param fileName the file name
+     * @param queries  the queries
+     * @throws Exception the exception
+     */
     public void jenaParse(String fileName, List<String> queries) throws Exception {
         for (int j = 0; j < queries.size(); j++) {
             Long startTime = System.nanoTime();
@@ -56,6 +93,12 @@ public class QueryParser {
 
     }
 
+    /**
+     * Process a query list.
+     *
+     * @param query the query
+     * @return the list
+     */
     public List<String[]> processAQuery(ParsedQuery query) {
         List<StatementPattern> patterns = StatementPatternCollector.process(query.getTupleExpr());
         List<String[]> queryResult = new ArrayList<>();
@@ -69,6 +112,9 @@ public class QueryParser {
         return queryResult;
     }
 
+    /**
+     * Shuffle queries.
+     */
     public void shuffleQueries() {
         queriesDictionary.forEach((k, v) -> Collections.shuffle(v));
     }
@@ -86,6 +132,12 @@ public class QueryParser {
 
     }
 
+    /**
+     * Parse.
+     *
+     * @param parserNumber the parser number
+     * @throws Exception the exception
+     */
     public void parse(int parserNumber) throws Exception {
         switch (parserNumber) {
             case 1:
