@@ -138,6 +138,29 @@ public class FilePath {
     }
 
     /**
+     * Get patterns number for each query.
+     *
+     * @param listQueries the list queries
+     * @return the map
+     */
+    private Map<Integer, Integer> getPatternsNumberForEachQuery(Collection<List<String>> listQueries){
+        Map<Integer, Integer> patternsNumberMap = new HashMap<>();
+        for(List<String> queries: listQueries){
+            for(String query: queries){
+                int patternNumber = 0;
+                for(String line: query.split("\\t")){
+                    if(line.contains("?v0 <")){
+                        patternNumber++;
+                    }
+                }
+                int count = patternsNumberMap.getOrDefault(patternNumber, 0);
+                patternsNumberMap.put(patternNumber, count + 1);
+            }
+        }
+        return patternsNumberMap;
+    }
+
+    /**
      * Gets nbr of duplicated queries from files.
      *
      * @param fileQueries the file queries
@@ -202,6 +225,7 @@ public class FilePath {
                 Map<String, List<String>> fileQueries = listOfValidQueriesFiles.stream().collect(Collectors.toMap(File::getName,
                         file -> handleFileQueries(file.getAbsolutePath())));
                 getNbrOfDupilcatedQueries(fileQueries.values());
+                logger.info("Patterns number for each query: {}", getPatternsNumberForEachQuery(fileQueries.values()));
                 return listOfValidQueriesFiles.stream().collect(Collectors.toMap(File::getName, file -> handleFileQueries(file.getAbsolutePath())));
             } else {
                 logger.error("No files in folder {}", folderPath);
