@@ -150,4 +150,9 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     public Map<Long, Map<Long, Set<Long>>> getIndexesByType(TypeIndex typeIndex) {
         return index.getIndexesByType(typeIndex);
     }
+
+    @Override
+    public int countAllIndexes() {
+        return index.countAllIndexes();
+    }
 }

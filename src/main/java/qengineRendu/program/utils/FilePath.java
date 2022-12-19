@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
+import qengineRendu.program.service.IDictionaryIndexesService;
+import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 
 /**
  * The type File path.
@@ -53,14 +55,15 @@ public class FilePath {
      * @throws IOException the io exception
      */
     private void generateGeneraleInformationCsv(String filePath) throws IOException {
+        IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
         FileWriter outputfile = new FileWriter(filePath);
         CSVWriter writer = new CSVWriter(outputfile);
         int nbQueries = StatisticQuery.getTotalQueryNumberInFiles();
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
         int nbTriples = 3;
-        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "temps_lecture_données",
+        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_des_indexes","temps_lecture_données",
                 "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
-        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries),
+        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(dictionaryIndexesService.countAllIndexes()),
                 StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary +
                 " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries + " ms", StatisticData.timeWorkload + " ms"};
         writer.writeNext(header);
