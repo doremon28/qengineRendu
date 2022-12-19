@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
+/**
+ * The type File path.
+ */
 public class FilePath {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(FilePath.class);
@@ -44,14 +47,23 @@ public class FilePath {
         return outputFolder;
     }
 
+    /**
+     * Generate generale information csv.
+     *
+     * @param filePath the file path
+     * @throws IOException the io exception
+     */
     private void generateGeneraleInformationCsv(String filePath) throws IOException {
         FileWriter outputfile = new FileWriter(filePath);
         CSVWriter writer = new CSVWriter(outputfile);
         int nbQueries = StatisticQuery.getTotalQueryNumberInFiles();
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
         int nbTriples = 3;
-        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "temps_lecture_données", "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
-        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary + " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries+" ms", StatisticData.timeWorkload + " ms"};
+        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "temps_lecture_données",
+                "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
+        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries),
+                StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary +
+                " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries + " ms", StatisticData.timeWorkload + " ms"};
         writer.writeNext(header);
         writer.writeNext(data);
         writer.close();
@@ -62,6 +74,7 @@ public class FilePath {
      * Generate 2 files csv statistics.
      * file 1 : (general_information.csv) general information about the workload
      * file 2 : (fileStatistics.csv) statistics about each query
+     *
      * @throws IOException the io exception
      */
     private void generateFileCsvStatistics() throws IOException {
@@ -89,6 +102,9 @@ public class FilePath {
         }
     }
 
+    /**
+     * Generate file txt statistics.
+     */
     private void generateFileTxtStatistics() {
         try (Writer outputFile = new BufferedWriter(new FileWriter(this.outputFolder + File.separator + "fileStatistics.txt", false))) {
             StatisticQuery.getStatisticQueriesInFile().forEach(s -> {
@@ -107,6 +123,12 @@ public class FilePath {
         }
     }
 
+    /**
+     * Generate file depending on the choice.
+     *
+     * @param choice the choice
+     * @throws IOException the io exception
+     */
     public void generateFile(int choice) throws IOException {
         if (choice == 1) {
             generateFileTxtStatistics();
@@ -116,36 +138,12 @@ public class FilePath {
         }
     }
 
-    public void repairFileQueriesFormat(String filePath){
-        // Read file
-        Path pathFile = Paths.get(filePath);
-        try (Stream<String> fileLines = Files.lines(pathFile)) {
-            List<String> lines = fileLines.collect(Collectors.toList());
-            AtomicBoolean queryIsCorrect = new AtomicBoolean(false);
-            // Check if the query is closed by accolade
-            lines.forEach(line -> {
-                if(line.contains("}")){
-                    queryIsCorrect.set(true);
-                }
-            });
-            // If the query is not closed by accolade, we add it
-            if(queryIsCorrect.get()){
-                logger.info("The file {} is already in the correct format", pathFile.getFileName());
-            }else{
-                for(int i=0; i<lines.size()-1; i++){
-                    String line = lines.get(i);
-                    if(lines.get(i+1).contains("SELECT")){
-                        lines.set(i, line+"}\n");
-                    }
-                }
-                logger.info("The file {} is now in the correct format", pathFile.getFileName());
-            }
-            Files.write(pathFile, lines);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
+    /**
+     * Gets files queries.
+     *
+     * @return the files queries
+     */
     public Map<String, List<String>> getFilesQueries() {
 
         if (this.queryDir == null) {
@@ -154,6 +152,12 @@ public class FilePath {
         return handleFolderFilesQueries(this.queryDir);
     }
 
+    /**
+     * Handle folder files queries map.
+     *
+     * @param folderPath the folder path
+     * @return the map
+     */
     private Map<String, List<String>> handleFolderFilesQueries(String folderPath) {
         File folder = new File(folderPath);
         List<File> listOfFiles;
@@ -175,6 +179,12 @@ public class FilePath {
         return Collections.emptyMap();
     }
 
+    /**
+     * Handle file queries list.
+     *
+     * @param filePath the file path
+     * @return the list
+     */
     private List<String> handleFileQueries(String filePath) {
         StringBuilder contentBuilder = new StringBuilder();
         List<String> list = new ArrayList<>();
