@@ -148,8 +148,8 @@ public class FilePath {
         for(List<String> queries: listQueries){
             for(String query: queries){
                 int patternNumber = 0;
-                for(String line: query.split("\\t")){
-                    if(line.contains("?v0 <")){
+                for(String line: query.split("\\?")){
+                    if(line.contains("v0 <")){
                         patternNumber++;
                     }
                 }
