@@ -3,14 +3,19 @@ package qengineRendu.program.parser;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
+import org.slf4j.Logger;
+import qengineRendu.program.utils.StatisticQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Jena parser.
  */
 public class JenaParser {
+    private final static Logger logger = org.slf4j.LoggerFactory.getLogger(JenaParser.class);
     /**
      * The constant model.
      */
@@ -46,7 +51,13 @@ public class JenaParser {
                 soln.varNames().forEachRemaining(var -> queryResults.add(soln.get(var).toString()));
             }
         }
-        return queryResults;
+        if (queryResults.isEmpty()) {
+            logger.info("No results for this query");
+        } else {
+            logger.info("Number of results for this query : {}", queryResults.size());
+            StatisticQuery.incrementQueriesNumberWithoutResponses(1);
+        }
+        return queryResults.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 }

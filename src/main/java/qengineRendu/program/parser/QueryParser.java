@@ -90,7 +90,8 @@ public class QueryParser {
             new StatisticQuery(fileName, queries.get(j), endTime - startTime, j+1);
             logger.info("Query {} parsed in {} ms", j + 1, ((endTime - startTime) / 1_000_000.0));
         }
-
+        StatisticQuery.getStatisticQueriesInFiles().put(fileName, new ArrayList<>(StatisticQuery.getStatisticQueriesInFile()));
+        StatisticQuery.refreshStatisticQueriesInFile();
     }
 
     /**

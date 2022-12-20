@@ -22,6 +22,7 @@ public class StatisticQuery {
      */
     private static final List<StatisticQuery> statisticQueriesInFile = new ArrayList<>();
 
+    private static int queriesNumberWithoutResponses = 0;
     /**
      * The File name.
      */
@@ -57,6 +58,18 @@ public class StatisticQuery {
                         String.valueOf(s.getTimeReadingQuery()),})
                 .forEach(res::add);
         return res;
+    }
+
+    public static int getQueriesNumberWithoutResponses() {
+        return queriesNumberWithoutResponses;
+    }
+
+    public static void incrementQueriesNumberWithoutResponses(int increment) {
+        queriesNumberWithoutResponses += increment;
+    }
+
+    public static void incrementQueriesNumberWithoutResponsesByOne() {
+        queriesNumberWithoutResponses++;
     }
 
     /**
