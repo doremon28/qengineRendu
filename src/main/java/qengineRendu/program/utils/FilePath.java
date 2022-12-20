@@ -54,16 +54,22 @@ public class FilePath {
      * @param filePath the file path
      * @throws IOException the io exception
      */
-    private void generateGeneraleInformationCsv(String filePath) throws IOException {
+    private void generateGeneraleInformationCsv(String filePath, boolean isJenna) throws IOException {
         IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
         FileWriter outputfile = new FileWriter(filePath);
         CSVWriter writer = new CSVWriter(outputfile);
         int nbQueries = StatisticQuery.getTotalQueryNumberInFiles();
+        int nbQueriesWithoutResponse = 0;
+        if (isJenna) {
+            nbQueriesWithoutResponse = nbQueries - StatisticQuery.getQueriesNumberWithoutResponses();
+        } else {
+            nbQueriesWithoutResponse = StatisticQuery.getQueriesNumberWithoutResponses();
+        }
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
         int nbTriples = 3;
-        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_des_indexes","temps_lecture_données",
+        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_requêtes_sans_réponses", "nombre_des_indexes", "temps_lecture_données",
                 "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
-        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(dictionaryIndexesService.countAllIndexes()),
+        String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(nbQueriesWithoutResponse), String.valueOf(dictionaryIndexesService.countAllIndexes()),
                 StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary +
                 " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries + " ms", StatisticData.timeWorkload + " ms"};
         writer.writeNext(header);
@@ -131,12 +137,12 @@ public class FilePath {
      * @param choice the choice
      * @throws IOException the io exception
      */
-    public void generateFile(int choice) throws IOException {
+    public void generateFile(int choice, boolean isJenna) throws IOException {
         if (choice == 1) {
             generateFileTxtStatistics();
         } else if (choice == 2) {
             generateFileCsvStatistics();
-            generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
+            generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv", isJenna);
         }
     }
 
@@ -146,13 +152,13 @@ public class FilePath {
      * @param listQueries the list queries
      * @return the map
      */
-    private Map<Integer, Integer> getPatternsNumberForEachQuery(Collection<List<String>> listQueries){
+    private Map<Integer, Integer> getPatternsNumberForEachQuery(Collection<List<String>> listQueries) {
         Map<Integer, Integer> patternsNumberMap = new HashMap<>();
-        for(List<String> queries: listQueries){
-            for(String query: queries){
+        for (List<String> queries : listQueries) {
+            for (String query : queries) {
                 int patternNumber = 0;
-                for(String line: query.split("\\?")){
-                    if(line.contains("v0 <")){
+                for (String line : query.split("\\?")) {
+                    if (line.contains("v0 <")) {
                         patternNumber++;
                     }
                 }
@@ -170,8 +176,8 @@ public class FilePath {
      */
     private void getNbrOfDupilcatedQueries(Collection<List<String>> fileQueries) {
         Map<Long, Long> duplicatedQueries = new HashMap<>();
-        if(!fileQueries.isEmpty()){
-            for(List<String> queries : fileQueries){
+        if (!fileQueries.isEmpty()) {
+            for (List<String> queries : fileQueries) {
                 // create a HashMap to store the duplication counts
                 duplicatedQueries.putAll(
                         (Map<? extends Long, ? extends Long>) queries.stream()
@@ -185,14 +191,14 @@ public class FilePath {
                 );
             }
             // divide value by corresponding key to get the number of duplicated queries for each number of occurrences
-            duplicatedQueries.forEach((k, v) ->  {
+            duplicatedQueries.forEach((k, v) -> {
                 if (k > 1)
                     duplicatedQueries.put(k, v / k);
             });
             for (Map.Entry<Long, Long> entry : duplicatedQueries.entrySet()) {
                 logger.info("Number of queries duplicated {} times : {}", entry.getKey(), entry.getValue());
             }
-        }else{
+        } else {
             logger.info("No queries to check in the folder {}", this.queryDir);
         }
     }

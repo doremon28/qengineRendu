@@ -65,7 +65,7 @@ public class MainTest {
         StatisticData.timeWorkload = (endTimeWorkload - startTimeWorkload) / 1_000_000.0;
         logger.info(" le temps total d’évaluation du workload est de {} ms", StatisticData.timeWorkload);
         if (outputFilePath != null && !outputFilePath.isEmpty()) {
-            fileManagement.generateFile(2);
+            fileManagement.generateFile(2, jenaActivationOption.equals("true"));
         }
     }
 
