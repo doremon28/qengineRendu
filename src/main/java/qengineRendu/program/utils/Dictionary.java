@@ -38,11 +38,14 @@ public class Dictionary {
      * @return the long
      */
     public Long addEntry(String stringValue) {
+        Long startDocCreation = System.nanoTime();
         LongAdder longAdder = new LongAdder();
         longAdder.add(dictionaryMap.size());
         longAdder.increment();
         if (!ifValueExist(stringValue)) {
             dictionaryMap.put(longAdder.longValue(), stringValue);
+            Long endDocCreation = System.nanoTime();
+            StatisticData.creatingDictionary = StatisticData.creatingDictionary + (endDocCreation - startDocCreation) / 1_000_000.0;
             return longAdder.longValue();
         } else {
             return getKeyFromValue(stringValue);

@@ -6,11 +6,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
+import qengineRendu.program.operations.MainRDFHandler;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.service.impl.DictionaryIndexesServiceImpl;
 
@@ -54,24 +54,26 @@ public class FilePath {
      * @param filePath the file path
      * @throws IOException the io exception
      */
-    private void generateGeneraleInformationCsv(String filePath, boolean isJenna) throws IOException {
+    private void generateGeneraleInformationCsv(String filePath) throws IOException {
         IDictionaryIndexesService dictionaryIndexesService = new DictionaryIndexesServiceImpl();
         FileWriter outputfile = new FileWriter(filePath);
         CSVWriter writer = new CSVWriter(outputfile);
         int nbQueries = StatisticQuery.getTotalQueryNumberInFiles();
-        int nbQueriesWithoutResponse = 0;
-        if (isJenna) {
-            nbQueriesWithoutResponse = nbQueries - StatisticQuery.getQueriesNumberWithoutResponses();
-        } else {
-            nbQueriesWithoutResponse = StatisticQuery.getQueriesNumberWithoutResponses();
-        }
+        int nbQueriesWithoutResponse = StatisticQuery.getQueriesNumberWithoutResponses();
         double timeToEvaluateQueries = StatisticQuery.getTotalTimeExecutionInFiles();
-        int nbTriples = 3;
-        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_requêtes_sans_réponses", "nombre_des_indexes", "temps_lecture_données",
-                "temps_lecture_requêtes", "temps_creation_dico", "temps_creation_index", "temps_total_evaluation", "temps_total",};
+        StatisticData.timeWorkload = StatisticData.timeReadingData + StatisticData.timeReadingQueries + StatisticData.creatingDictionary
+                + StatisticData.creatingIndexes + StatisticQuery.getTotalTimeExecutionInFiles();
+        if ( StatisticData.timeWorkload > StatisticData.timeTotalExcecution) {
+            double times =  StatisticData.timeWorkload - StatisticData.timeTotalExcecution;
+            StatisticData.timeWorkload = StatisticData.timeTotalExcecution;
+            StatisticData.timeTotalExcecution = times + StatisticData.timeTotalExcecution;
+        }
+        int nbTriples = StatisticData.nbTriplet;
+        String[] header = {"fichier_données", "dossier_requêtes", "nombre_triplets_RDF", "nombre_requêtes", "nombre_requêtes_sans_réponses", "nombre_des_indexes", "temps_lecture_données (ms)",
+                "temps_lecture_requêtes (ms)", "temps_creation_dico (ms)", "temps_creation_index (ms)", "temps total d'évaluation des requetes (ms)", "temps total d'évaluation du workload (ms)", "temps total (du début à la fin du programme) (ms)"};
         String[] data = {getDataFile(), getQueryDir(), String.valueOf(nbTriples), String.valueOf(nbQueries), String.valueOf(nbQueriesWithoutResponse), String.valueOf(dictionaryIndexesService.countAllIndexes()),
                 StatisticData.timeReadingData + " ms", StatisticData.timeReadingQueries + " ms", StatisticData.creatingDictionary +
-                " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries + " ms", StatisticData.timeWorkload + " ms"};
+                " ms", StatisticData.creatingIndexes + " ms", timeToEvaluateQueries + " ms", StatisticData.timeWorkload + " ms", StatisticData.timeTotalExcecution + " ms"};
         writer.writeNext(header);
         writer.writeNext(data);
         writer.close();
@@ -137,12 +139,12 @@ public class FilePath {
      * @param choice the choice
      * @throws IOException the io exception
      */
-    public void generateFile(int choice, boolean isJenna) throws IOException {
+    public void generateFile(int choice) throws IOException {
         if (choice == 1) {
             generateFileTxtStatistics();
         } else if (choice == 2) {
             generateFileCsvStatistics();
-            generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv", isJenna);
+            generateGeneraleInformationCsv(getOutputFolder() + "/general_information.csv");
         }
     }
 

@@ -68,5 +68,10 @@ public interface IDictionaryIndexesService {
      */
     int countAllIndexes();
 
+    /**
+     * Decode list of indexes
+     */
+    Set<String> decodeListOfIndexes(Set<Long> indexes);
+
 
 }

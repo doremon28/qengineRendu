@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import qengineRendu.program.service.IDictionaryIndexesService;
 import qengineRendu.program.utils.*;
 import qengineRendu.program.utils.Dictionary;
-
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The type Dictionary indexes service.
@@ -41,7 +41,6 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
             resIndex = index.getIndexesByType(TypeIndex.SOP);
             Long subjectIndex = dictionary.encode(statement[0]);
             getFromIndex(statement, res, isFirstPattern, resIndex, subjectIndex);
-
         } else if (statement[0] == null && statement[1] != null && statement[2] != null) {
             resIndex = index.getIndexesByType(TypeIndex.POS);
             Long predicateIndex = dictionary.encode(statement[1]);
@@ -99,10 +98,7 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
 
     @Override
     public void addEntryFromStatement(TypeIndex typeIndex, Statement st) {
-        long startDocCreation = System.nanoTime();
         Long[] triplet = addEntryFromStatementDependingToType(typeIndex, st);
-        long endDocCreation = System.nanoTime();
-        StatisticData.creatingDictionary = StatisticData.creatingDictionary + (endDocCreation - startDocCreation) / 1_000_000.0;
         long startIndexCreation = System.nanoTime();
         generateIndexes(typeIndex, triplet);
         long endIndexCreation = System.nanoTime();
@@ -149,5 +145,10 @@ public class DictionaryIndexesServiceImpl implements IDictionaryIndexesService {
     @Override
     public int countAllIndexes() {
         return index.countAllIndexes();
+    }
+
+    @Override
+    public Set<String> decodeListOfIndexes(Set<Long> indexes) {
+        return indexes.stream().map(index -> dictionary.decode(index)).collect(Collectors.toSet());
     }
 }

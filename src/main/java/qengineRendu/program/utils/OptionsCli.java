@@ -28,11 +28,13 @@ public class OptionsCli {
         Option output = new Option(OptionData.OUTPUT_OPT, OptionData.OUTPUT_LONG_OPT, true, OptionData.OUTPUT_DESC);
         output.setRequired(true);
         Option jenaActivation = new Option(OptionData.JENA_ACTIVATION_OPT, OptionData.JENA_ACTIVATION_LONG_OPT, true, OptionData.JENA_ACTIVATION_DESC);
-        jenaActivation.setRequired(true);
+        jenaActivation.setRequired(false);
         Option warm = new Option(OptionData.WARM_OPT, OptionData.WARM_LONG_OPT, true, OptionData.WARM_DESC);
         warm.setRequired(false);
         Option shuffle = new Option(OptionData.SHUFFLE_OPT, OptionData.SHUFFLE_LONG_OPT, true, OptionData.SHUFFLE_DESC);
         shuffle.setRequired(false);
+        Option exportQueryResult = new Option(OptionData.EXPORT_QUERY_RESULT_OPT, OptionData.EXPORT_QUERY_RESULT_LONG_OPT, true, OptionData.EXPORT_QUERY_RESULT_DESC);
+        exportQueryResult.setRequired(false);
         this.options = new Options();
         options.addOption(queries);
         options.addOption(data);
@@ -40,6 +42,7 @@ public class OptionsCli {
         options.addOption(jenaActivation);
         options.addOption(warm);
         options.addOption(shuffle);
+        options.addOption(exportQueryResult);
     }
 
     /**
